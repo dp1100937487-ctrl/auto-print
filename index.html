@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Print Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f6f9; text-align: center; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        h2 { color: #333; }
+        .option-group { margin: 15px 0; text-align: left; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="file"], select { width: 100%; padding: 10px; box-sizing: border-box; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { background-color: #28a745; color: white; padding: 12px; border: none; width: 100%; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #218838; }
+        #qr-box { margin-top: 20px; display: none; }
+        #qr-code { margin-top: 10px; }
+    </style>
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>🖨️ Auto Print Portal</h2>
+    <p>अपनी फाइल अपलोड करें और टाइप चुनें</p>
+    
+    <div class="option-group">
+        <label for="fileInput">1. फाइल चुनें (PDF / Image):</label>
+        <input type="file" id="fileInput" accept=".pdf, image/*">
+    </div>
+
+    <div class="option-group">
+        <label for="printType">2. प्रिंट का प्रकार चुनें:</label>
+        <select id="printType" onchange="calculateTotal()">
+            <option value="bw">Black & White (₹2 / पेज)</option>
+            <option value="color">Color (₹10 / पेज)</option>
+        </select>
+    </div>
+
+    <div class="option-group">
+        <label for="pageCount">3. कुल पेज (Total Pages):</label>
+        <input type="number" id="pageCount" value="1" min="1" onchange="calculateTotal()">
+    </div>
+
+    <h3 id="totalAmount">कुल राशि: ₹2</h3>
+
+    <button class="btn" onclick="generatePaymentQR()">पेमेंट करें और प्रिंट निकालें</button>
+
+    <div id="qr-box">
+        <h4>नीचे दिए गए QR कोड को स्कैन करके पे करें:</h4>
+        <div id="qr-code"></div>
+        <p style="font-size: 12px; color: #666; margin-top: 5px;">पेमेंट सफल होने के बाद प्रिंट ऑटोमैटिक निकल जाएगा।</p>
+    </div>
+</div>
+
+<script>
+    // यहाँ अपनी UPI ID डालें (उदा: 9876543210@paytm या yourname@okaxis)
+    const myUpiId = "YOUR_UPI_ID_HERE@upi";
+    const shopName = "Auto Print Shop";
+
+    function calculateTotal() {
+        const type = document.getElementById('printType').value;
+        const pages = parseInt(document.getElementById('pageCount').value) || 1;
+        const rate = (type === 'bw') ? 2 : 10;
+        const total = pages * rate;
+        document.getElementById('totalAmount').innerText = `कुल राशि: ₹${total}`;
+        return total;
+    }
+
+    function generatePaymentQR() {
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files.length) {
+            alert("कृपया पहले अपनी फाइल अपलोड करें!");
+            return;
+        }
+
+        const amount = calculateTotal();
+        const qrContainer = document.getElementById('qr-code');
+        qrContainer.innerHTML = ""; // पुराना QR हटाएं
+
+        // UPI Payment Link
+        const upiUrl = `upi://pay?pa=${myUpiId}&pn=${encodeURIComponent(shopName)}&am=${amount}&cu=INR&tn=PrintOrder`;
+
+        // Generate QR
+        new QRCode(qrContainer, {
+            text: upiUrl,
+            width: 180,
+            height: 180
+        });
+
+        document.getElementById('qr-box').style.display = "block";
+    }
+</script>
+
+</body>
+</html>

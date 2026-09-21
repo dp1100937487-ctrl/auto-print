@@ -33,7 +33,7 @@
     <div class="option-group">
         <label for="printType">2. प्रिंट का प्रकार चुनें:</label>
         <select id="printType" onchange="calculateTotal()">
-            <option value="bw">Black & White (₹2 / पेज)</option>
+            <option value="bw">Black & White (₹5 / पेज)</option>
             <option value="color">Color (₹10 / पेज)</option>
         </select>
     </div>
@@ -43,7 +43,7 @@
         <input type="number" id="pageCount" value="1" min="1" onchange="calculateTotal()">
     </div>
 
-    <h3 id="totalAmount">कुल राशि: ₹2</h3>
+    <h3 id="totalAmount">कुल राशि: ₹5</h3>
 
     <button class="btn" onclick="generatePaymentQR()">पेमेंट करें और प्रिंट निकालें</button>
 
@@ -55,14 +55,14 @@
 </div>
 
 <script>
-    // यहाँ अपनी UPI ID डालें (उदा: 9876543210@paytm या yourname@okaxis)
-    const myUpiId = "YOUR_UPI_ID_HERE@upi";
+    // यहाँ अपनी UPI ID डालें (उदा: 9718715935@paytm)
+    const myUpiId = "9718715935@kotak811";
     const shopName = "Auto Print Shop";
 
     function calculateTotal() {
         const type = document.getElementById('printType').value;
         const pages = parseInt(document.getElementById('pageCount').value) || 1;
-        const rate = (type === 'bw') ? 2 : 10;
+        const rate = (type === 'bw') ? 5: 10;
         const total = pages * rate;
         document.getElementById('totalAmount').innerText = `कुल राशि: ₹${total}`;
         return total;
